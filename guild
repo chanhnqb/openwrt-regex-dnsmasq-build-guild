@@ -1,0 +1,31 @@
+# Clone openwrt repo
+git clone https://github.com/openwrt/openwrt.git
+cd openwrt
+
+# Checkout the current release tag
+git checkout openwrt-xx.xx
+
+# Install feeds
+./scripts/feeds update -a
+./scripts/feeds install -a
+
+# Delete the orignal dnsmasq package from official feeds
+rm -rf package/network/services/dnsmasq
+
+#import dnsmasq-regex-openwrt
+git clone -b openwrt-xx-xx https://github.com/lixingcong/dnsmasq-regex-openwrt package/dnsmasq
+
+
+# Config and build the 'dnsmasq' as module. It was located in 'Base System '
+make menuconfig
+# Choose target -> Marvell Armada 385 88F6820	
+# Choose M at Base System - dnsmsasq
+
+# Compile the full openwrt, it may take about 20 minutes
+make -j8
+
+# Compile dnsmasq
+# make package/dnsmasq-regex-openwrt/compile V=s
+
+# Copy the binary if you like
+find bin/packages | grep dnsmasq
